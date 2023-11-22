@@ -11,6 +11,12 @@ int resident_prefs[2000][2000];
 int hosp_prefs[2000][2000];
 // final_hosp_matches[i] will contain the resident hospital i is finally matched to
 int final_hosp_matches[2000];
+//forbidden hospital-resident matches
+unordered_map<int, vector<int>> forbidden_rh;
+//forbidden resident-hospital matches
+unordered_map<int, vector<int>> forbidden_hr;
+
+
 
 int main()
 {
@@ -26,6 +32,9 @@ int main()
       scanf("%i", &next_pref);
       next_pref -= 1;
       hosp_prefs[i][j] = next_pref;
+      if(j > n/2 - 1) {
+        
+      }
     }
   }
 
@@ -54,6 +63,8 @@ int main()
     next_proposal[i] = 0;
   }
 
+  //while there is a free man
+  
   // repeating G-S loop until all hospitals are matched
   while (matches_hosps.size() < n)
   {

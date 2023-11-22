@@ -15,8 +15,8 @@ class Main {
     static boolean debug = false;
 
     // forbidden pairs
-    static HashMap<Integer, HashMap<Integer,Integer>> forbidden_hr = new HashMap<Integer, HashMap<Integer,Integer>>();
-    static HashMap<Integer, HashMap<Integer,Integer>> forbidden_rh = new HashMap<Integer, HashMap<Integer,Integer>>();
+    static HashMap<Integer, HashSet<Integer>> forbidden_hr = new HashMap<>();
+    static HashMap<Integer, HashSet<Integer>> forbidden_rh = new HashMap<>();
 
     // hospital preferences
     static ArrayList<ArrayList<Integer>> hosp_prefs = new ArrayList<ArrayList<Integer>>();
@@ -34,7 +34,7 @@ class Main {
         // reading in hospital preferences
         for (int i = 0; i < n; i++) {
             hosp_prefs.add(new ArrayList<Integer>());
-            forbidden_hr.put(i, new HashMap<Integer,Integer>());
+            forbidden_hr.put(i, new HashSet<Integer>());
 
             String[] line = br.readLine().split(" ");
             for (int j = 0; j < n; j++) {
@@ -44,7 +44,7 @@ class Main {
                 if(j > n/2 - 1) {
                     if(debug) { System.out.println("Forbidden_hr: " + i + ", " + next_pref);}
 
-                    forbidden_hr.get(i).put(next_pref,1);
+                    forbidden_hr.get(i).add(next_pref);
                 }
         
             }
@@ -53,7 +53,7 @@ class Main {
         // reading in resident preferences
         for (int i = 0; i < n; i++) {
             resident_prefs.put(i,new HashMap<Integer,Integer>());
-            forbidden_rh.put(i,new HashMap<Integer,Integer>());
+            forbidden_rh.put(i,new HashSet<Integer>());
 
             String[] line = br.readLine().split(" ");
             for (int j = 0; j < n; j++) {
@@ -61,7 +61,7 @@ class Main {
                 resident_prefs.get(i).put(next_pref, j);
                 if(j > n/2 - 1) {
                     if(debug)  {System.out.println("Forbidden_rh: " + i + ", " + next_pref);}
-                    forbidden_rh.get(i).put(next_pref,1);
+                    forbidden_rh.get(i).add(next_pref);
                 }
             }     
         }
@@ -117,7 +117,7 @@ class Main {
                     // resident the hospital wants to propose to in this round
                     if(next_proposal[i] <= n/2 - 1) {
                         int next_pref = hosp_prefs.get(i).get(next_proposal[i]);
-                        if(forbidden_rh.get(next_pref).containsKey(i)) {if(debug) {System.out.println("Hospital " + i + "forbidden from "+ next_pref);} next_proposal[i]++; continue;}
+                        if(forbidden_rh.get(next_pref).contains(i)) {if(debug) {System.out.println("Hospital " + i + "forbidden from "+ next_pref);} next_proposal[i]++; continue;}
                         // checking if the preferred resident is already matched
                         if (resident_hosp_matches.containsKey(next_pref)) {
                             int curr_match = resident_hosp_matches.get(next_pref);
@@ -155,7 +155,7 @@ class Main {
         for (int res = 0; res < n; res++) {
             int hosp = resident_hosp_matches.get(res);
             final_hosp_matches[hosp] = res;
-            if(forbidden_hr.get(hosp).containsKey(res) || forbidden_rh.get(res).containsKey(hosp)) {
+            if(forbidden_hr.get(hosp).contains(res) || forbidden_rh.get(res).contains(hosp)) {
                 if(debug) {System.out.println("Failing: " + hosp + " and " + res);}
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
                  bw.write("No\n");
